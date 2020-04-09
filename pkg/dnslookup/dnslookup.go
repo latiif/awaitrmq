@@ -6,6 +6,9 @@ import (
 
 // DNSLookup returns the result of a dns lookup on the given url
 func DNSLookup(url string) bool {
-	_, err := net.LookupIP(url)
-	return err != nil
+	ip, err := net.LookupIP(url)
+	if err == nil && len(ip) != 0 {
+		return true
+	}
+	return false
 }
