@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/latiif/awaitrmq/pkg/amqplookup"
 	"github.com/latiif/awaitrmq/pkg/dnslookup"
 	"github.com/spf13/cobra"
 )
@@ -71,7 +72,9 @@ func doAwait(target string) {
 				return
 			case <-intervalTicker.C:
 				log.Printf("Attempting to find %s...", target)
-				found := dnslookup.DNSLookup(target)
+				// If dnsLookup flag is set to true, perform a dns lookup, otherwise just do an amqp lookup
+				found := (dnslookupFlag == false || dnslookup.DNSLookup(target)) && amqplookup.AMQPLookup(target, time.Duration(intervalFlag)*time.Millisecond)
+				log.Printf("Attempt %s.", ifThenElse(found, "succeded", "failed"))
 				if found {
 					done <- true
 					return
@@ -85,4 +88,11 @@ func doAwait(target string) {
 	} else {
 		os.Exit(1)
 	}
+}
+
+func ifThenElse(condition bool, then string, otherwise string) string {
+	if condition {
+		return then
+	}
+	return otherwise
 }
