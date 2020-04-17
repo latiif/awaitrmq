@@ -3,6 +3,7 @@ package amqplookup
 import (
 	"fmt"
 	"net"
+	"strings"
 	"time"
 
 	"github.com/streadway/amqp"
@@ -18,6 +19,12 @@ func AMQPLookup(url string, lookupTimeout time.Duration) bool {
 	if err == nil && conn != nil {
 		defer conn.Close()
 		return true
+	}
+	if err != nil && conn != nil {
+		errMessage := fmt.Sprint(err)
+		if strings.Contains(errMessage, `Exception (403) Reason: "username or password not allowed`) {
+			return true
+		}
 	}
 	return false
 }
