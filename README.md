@@ -1,4 +1,5 @@
 # awaitrmq
+[![Go Report Card](https://goreportcard.com/badge/github.com/latiif/awaitrmq)](https://goreportcard.com/report/github.com/latiif/awaitrmq) ![Docker Pulls](https://img.shields.io/docker/pulls/latiif/awaitrmq) ![Docker Latest](https://img.shields.io/docker/v/latiif/awaitrmq)
 
 awaitrmq is a smart [Kubernetes init container](https://kubernetes.io/docs/concepts/workloads/pods/init-containers) for RabbitMQ.
 
