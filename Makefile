@@ -34,6 +34,14 @@ windows:
 	CGO_ENABLED=0  GOOS=windows GOARCH=${GOARCH} go build ${LDFLAGS} -o ${BIN_DIR}/${BINARY}-windows-${GOARCH}.exe . ; \
 	cd - >/dev/null
 
+docker:
+	cd ${BUILD_DIR}; \
+	docker build -f Dockerfile -t ${GITHUB_USERNAME}/${BINARY}:${COMMIT} -t ${GITHUB_USERNAME}/${BINARY}:${BRANCH} -t ${GITHUB_USERNAME}/${BINARY}:latest .
+	docker push ${GITHUB_USERNAME}/${BINARY}:${COMMIT}
+	docker push ${GITHUB_USERNAME}/${BINARY}:${BRANCH}
+	docker push ${GITHUB_USERNAME}/${BINARY}:latest
+	cd - >/dev/null
+
 vet:
 	-cd ${BUILD_DIR}; \
 	go mod verify > ${VERIFY_REPORT} 2>&1 ; \
