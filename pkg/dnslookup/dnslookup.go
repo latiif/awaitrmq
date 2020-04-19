@@ -1,14 +1,19 @@
 package dnslookup
 
 import (
+	"fmt"
+	"log"
 	"net"
-	"strings"
+	Url "net/url"
 )
 
 // DNSLookup returns the result of a dns lookup on the given url
 func DNSLookup(url string) bool {
-	//TODO find a better way to extract host
-	host := strings.Split(url, ":")[0] //remove port number
+	u, err := Url.Parse(url)
+	if err != nil {
+		log.Fatal(fmt.Errorf("Invalid URL: %s. %v", url, err))
+	}
+	host := u.Hostname()
 	ip, err := net.LookupIP(host)
 	if err == nil && len(ip) != 0 {
 		return true

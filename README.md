@@ -17,17 +17,24 @@ Awaits for a RabbitMQ Service
 Smartly awaits for a RabbitMQ Service to actually be running
 
 ```
-awaitrmq [flags]
+awaitrmq RabbitMQ-Address[:port number] [flags]
 ```
 
 ### Options
 
+RabbitMQ-Address MUST be at position 1.
+
+Port number is optional. (default 5672).
 ```
   -l, --dnslookup      When true, awaits a succesful dnslookup before proceeding. (default true)
   -h, --help           help for awaitrmq
   -i, --interval int   Interval between attempts to check in milliseconds (default 2000)
   -t, --timeout int    Timeout to stop waiting in milliseconds. Pass 0 to timeout in ~ 290 years.
 ```
+
+### Example
+
+`awaitrmq localhost --dnslookup=false -i 1000 -t 5000`
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
