@@ -28,13 +28,13 @@ Port number is optional. (default 5672).
 ```
   -l, --dnslookup      When true, awaits a succesful dnslookup before proceeding. (default true)
   -h, --help           help for awaitrmq
-  -i, --interval int   Interval between attempts to check in milliseconds (default 2000)
-  -t, --timeout int    Timeout to stop waiting in milliseconds. Pass 0 to timeout in ~ 290 years.
+  -i, --interval int   Interval between attempts to check (default 2s)
+  -t, --timeout int    Timeout to stop waiting. Pass 0 to timeout in ~ 290 years.
 ```
 
 ### Example
 
-`awaitrmq localhost --dnslookup=false -i 1000 -t 5000`
+`awaitrmq localhost --dnslookup=false -i=1s -t=5m`
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
