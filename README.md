@@ -24,17 +24,31 @@ awaitrmq RabbitMQ-Address[:port number] [flags]
 
 RabbitMQ-Address MUST be at position 1.
 
-Port number is optional. (default 5672).
+Port number is optional. (default `5672`).
 ```
-  -l, --dnslookup      When true, awaits a succesful dnslookup before proceeding. (default true)
-  -h, --help           help for awaitrmq
-  -i, --interval int   Interval between attempts to check (default 2s)
-  -t, --timeout int    Timeout to stop waiting. Pass 0 to timeout in ~ 290 years.
+  -h, --help              help for awaitrmq
+  -i, --interval string   Interval between attempts to check. (default 2s)
+  -t, --timeout string    Timeout to stop waiting in milliseconds. Pass 0 to timeout in ~ 290 years. (default 0)
+  -v, --verbose           Sets output to verbose. (default false)
 ```
 
 ### Example
+In both examples, we use `awaitrmq` to await a RabbitMQ instance running on `localhost` port `5672`. Interval is set to `1` second and timeout limit is `5` minutes. No credentials are needed.
 
-`awaitrmq localhost --dnslookup=false -i=1s -t=5m`
+#### As a binary
+
+```bash
+awaitrmq localhost -v -i=1s -t=5m
+```
+
+#### As an init container
+When defining containers that depend on the message bus, add this snippet under `spec`.
+```YAML
+      initContainers:
+        - name:   messagebus-init-container
+          image:  latiif/awaitrmq
+          args:   ["rabbitmq-svc","-v","-i=1s","-t=5m"]
+```
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

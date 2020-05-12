@@ -40,9 +40,9 @@ func Execute() error {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&timeoutFlag, "timeout", "t", "0", "Timeout to stop waiting in milliseconds. Pass 0 to timeout in ~ 290 years.")
-	rootCmd.PersistentFlags().StringVarP(&intervalFlag, "interval", "i", "2s", "Interval between attempts to check")
-	rootCmd.PersistentFlags().BoolVarP(&verboseFlag, "verbose", "v", false, "When true, sets output to verbose.")
+	rootCmd.PersistentFlags().StringVarP(&timeoutFlag, "timeout", "t", "0", "Timeout to stop waiting in milliseconds. Pass 0 to timeout in ~ 290 years. (default 0)")
+	rootCmd.PersistentFlags().StringVarP(&intervalFlag, "interval", "i", "2s", "Interval between attempts to check. (default 2s)")
+	rootCmd.PersistentFlags().BoolVarP(&verboseFlag, "verbose", "v", false, "Sets output to verbose. (default false)")
 }
 
 func doAwait(target string) {
