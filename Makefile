@@ -36,10 +36,7 @@ windows:
 
 docker:
 	cd ${BUILD_DIR}; \
-	docker build -f Dockerfile -t ${GITHUB_USERNAME}/${BINARY}:${COMMIT} -t ${GITHUB_USERNAME}/${BINARY}:${BRANCH} -t ${GITHUB_USERNAME}/${BINARY}:latest .
-	docker push ${GITHUB_USERNAME}/${BINARY}:${COMMIT}
-	docker push ${GITHUB_USERNAME}/${BINARY}:${BRANCH}
-	docker push ${GITHUB_USERNAME}/${BINARY}:latest
+	docker build -f Dockerfile -t ${GITHUB_USERNAME}/${BINARY}:${COMMIT} -t ${GITHUB_USERNAME}/${BINARY}:${BRANCH} -t ${GITHUB_USERNAME}/${BINARY}:${VERSION} -t ${GITHUB_USERNAME}/${BINARY}:latest .
 	cd - >/dev/null
 
 vet:
