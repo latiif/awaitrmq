@@ -6,15 +6,14 @@ import (
 	"time"
 
 	"github.com/latiif/awaitrmq/pkg/amqplookup"
-	"github.com/latiif/awaitrmq/pkg/dnslookup"
 	"github.com/spf13/cobra"
 )
 
 var (
 	// flags
-	timeoutFlag   string
-	intervalFlag  string
-	dnslookupFlag bool
+	timeoutFlag  string
+	intervalFlag string
+	verboseFlag  bool
 )
 
 var rootCmd = &cobra.Command{
@@ -37,7 +36,7 @@ func Execute() error {
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&timeoutFlag, "timeout", "t", "0", "Timeout to stop waiting in milliseconds. Pass 0 to timeout in ~ 290 years.")
 	rootCmd.PersistentFlags().StringVarP(&intervalFlag, "interval", "i", "2s", "Interval between attempts to check")
-	rootCmd.PersistentFlags().BoolVarP(&dnslookupFlag, "dnslookup", "l", true, "When true, awaits a successful dnslookup before proceeding.")
+	rootCmd.PersistentFlags().BoolVarP(&verboseFlag, "verbose", "v", true, "When true, sets output to verbose.")
 }
 
 func doAwait(target string) {
@@ -73,8 +72,7 @@ func doAwait(target string) {
 				return
 			case <-intervalTicker.C:
 				log.Printf("Attempting to find %s...", target)
-				// If dnsLookup flag is set to true, perform a dns lookup, otherwise just do an amqp lookup
-				found := (dnslookupFlag == false || dnslookup.DNSLookup(target)) && amqplookup.AMQPLookup(target, intervalDuration)
+				found := amqplookup.AMQPLookup(target, intervalDuration)
 				log.Printf("Attempt %s.", ifThenElse(found, "succeeded", "failed"))
 				if found {
 					done <- true
