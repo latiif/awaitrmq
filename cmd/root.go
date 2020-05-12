@@ -6,7 +6,13 @@ import (
 	"time"
 
 	"github.com/latiif/awaitrmq/pkg/amqplookup"
+	"github.com/latiif/awaitrmq/pkg/verbose"
 	"github.com/spf13/cobra"
+)
+
+const (
+	successExitCode = 0
+	failureExitCode = 1
 )
 
 var (
@@ -36,10 +42,16 @@ func Execute() error {
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&timeoutFlag, "timeout", "t", "0", "Timeout to stop waiting in milliseconds. Pass 0 to timeout in ~ 290 years.")
 	rootCmd.PersistentFlags().StringVarP(&intervalFlag, "interval", "i", "2s", "Interval between attempts to check")
-	rootCmd.PersistentFlags().BoolVarP(&verboseFlag, "verbose", "v", true, "When true, sets output to verbose.")
+	rootCmd.PersistentFlags().BoolVarP(&verboseFlag, "verbose", "v", false, "When true, sets output to verbose.")
 }
 
 func doAwait(target string) {
+	v := verbose.NewVerbose(verboseFlag)
+	v.Publish("target", target)
+	v.Publish("verbose flag", verboseFlag)
+	v.Publish("interval flag", intervalFlag)
+	v.Publish("timeout flag", timeoutFlag)
+
 	intervalDuration, err := time.ParseDuration(intervalFlag)
 	if err != nil {
 		log.Fatalf("value of interval (%s) is invalid.\n", intervalFlag)
@@ -48,6 +60,7 @@ func doAwait(target string) {
 		log.Printf("value of interval (%s) is too low. Consider increasing it above 1000ms", intervalFlag)
 	}
 	intervalTicker := time.NewTicker(intervalDuration)
+	v.Publish("interval duration", intervalDuration)
 
 	var timeoutTimer *time.Timer
 	if timeoutFlag == "0" {
@@ -60,6 +73,7 @@ func doAwait(target string) {
 			log.Fatalf("value of timeout (%s) is invalid.\n", timeoutFlag)
 		}
 		timeoutTimer = time.NewTimer(timeoutDuration)
+		v.Publish("timeout duration", timeoutDuration)
 	}
 	done := make(chan bool)
 
@@ -67,7 +81,8 @@ func doAwait(target string) {
 		for {
 			select {
 			case <-timeoutTimer.C:
-				log.Fatalf("Timed out after %s.\n", timeoutFlag)
+				log.Printf("Timed out after %s.\n", timeoutFlag)
+				v.Publish("Event", "timed out")
 				done <- false
 				return
 			case <-intervalTicker.C:
@@ -75,6 +90,7 @@ func doAwait(target string) {
 				found := amqplookup.AMQPLookup(target, intervalDuration)
 				log.Printf("Attempt %s.", ifThenElse(found, "succeeded", "failed"))
 				if found {
+					v.Publish("Event", "succeeded")
 					done <- true
 					return
 				}
@@ -82,10 +98,13 @@ func doAwait(target string) {
 		}
 	}()
 	successful := <-done
+	v.Publish("Success", successful)
 	if successful {
-		os.Exit(0)
+		v.Publish("Exit code", successExitCode)
+		os.Exit(successExitCode)
 	} else {
-		os.Exit(1)
+		v.Publish("Exit code", failureExitCode)
+		os.Exit(failureExitCode)
 	}
 }
 
