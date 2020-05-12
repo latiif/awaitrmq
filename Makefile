@@ -15,7 +15,7 @@ CURRENT_DIR=$(shell pwd)
 BUILD_DIR_LINK=$(shell readlink ${BUILD_DIR})
 
 # Setup the -ldflags option for go build here, interpolate the variable values
-LDFLAGS = -ldflags "-X main.VERSION=${VERSION} -X main.COMMIT=${COMMIT} -X main.BRANCH=${BRANCH}"
+LDFLAGS = -ldflags "-X github.com/latiif/awaitrmq/cmd.VERSION=${VERSION} -X github.com/latiif/awaitrmq/cmd.COMMIT=${COMMIT} -X github.com/latiif/awaitrmq/cmd.BRANCH=${BRANCH}"
 
 all: clean test vet linux darwin windows
 
